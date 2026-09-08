@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 
 import Login from "../pages/Login";
 import Home from "../pages/Home";
@@ -8,7 +8,7 @@ import Orcamento from "../pages/Orcamento";
 
 function AppRoutes() {
     return (
-        <BrowserRouter>
+        <HashRouter>
             <Routes>
                 <Route
                     path="/"
@@ -54,7 +54,7 @@ function AppRoutes() {
                     element={<Orcamento/>}
                 />
             </Routes>
-        </BrowserRouter>
+        </HashRouter>
     )
 }
 
