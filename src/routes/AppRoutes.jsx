@@ -8,6 +8,7 @@ import Orcamento from "../pages/Orcamento";
 
 import OrcamentoEnviado from "../pages/OrcamentoEnviado"
 import Orcamentos from "../pages/Orcamentos"
+import OrcamentosDetalhes from "../pages/OrcamentoDetalhes";
 
 function AppRoutes() {
     return (
@@ -60,6 +61,11 @@ function AppRoutes() {
                 <Route 
                     path="/orcamento-enviado"
                     element={<OrcamentoEnviado/>}
+                />
+
+                <Route 
+                    path="/orcamento-detalhes/:id"
+                    element={<OrcamentosDetalhes/>}
                 />
             </Routes>
         </HashRouter>

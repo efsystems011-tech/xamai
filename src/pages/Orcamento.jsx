@@ -59,6 +59,7 @@ function Orcamento() {
             servico: profissional.profissao,
             ...formulario,
             fotos,
+            status: "aguardando",
         }
 
        adicionarOrcamento(orcamento)

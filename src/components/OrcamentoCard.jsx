@@ -4,10 +4,20 @@ import {
     Clock,
     ChevronRight,
 } from "lucide-react"
+import { useNavigate } from "react-router-dom"
+
+import StatusOrcamento from "./StatusOrcamento"
 
 function OrcamentoCard({ orcamento }) {
+    const navigate = useNavigate()
+
+    function handleClick() {
+        navigate(`/orcamento-detalhes/${orcamento.id}`)
+    }
     return (
-        <div className="bg-white rounded-2xl p-4 shadow-sm">
+        <button
+            onClick={handleClick}
+            className="w-full rounded-2xl bg-white p-4 text-left shadow-sm transition hover:shadow-md active:scale-[0.99]">
             <div className="flex items-start justify-between gap-3">
                 <div>
                     <h3 className="text-lg font-bold text-gray-900">
@@ -19,9 +29,7 @@ function OrcamentoCard({ orcamento }) {
                     </p>
                 </div>
 
-                <span className="bg-yellow-100 rounded-full px-3 py-1 text-xs font-bold text-yellow-700">
-                    Aguardando
-                </span>
+                <StatusOrcamento status={orcamento.status}/>
             </div>
 
             <div className="mt-4 space-y-2">
@@ -51,7 +59,7 @@ function OrcamentoCard({ orcamento }) {
                     className="text-gray-400"
                 />
             </div>
-        </div>
+        </button>
     )
 }
 
