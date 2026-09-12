@@ -60,6 +60,7 @@ function Orcamento() {
             ...formulario,
             fotos,
             status: "aguardando",
+            solicitacaoId: profissional.id,
         }
 
        adicionarOrcamento(orcamento)

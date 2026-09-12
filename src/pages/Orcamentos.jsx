@@ -63,7 +63,7 @@ function Orcamentos() {
                     <p className="text-sm text-gray-600">
                         Você possui{" "}
                         <strong className="text-gray-900">
-                            {orcamentos.lenght}
+                            {orcamentos.length}
                         </strong>{" "} orçamento(s)
                     </p>
 

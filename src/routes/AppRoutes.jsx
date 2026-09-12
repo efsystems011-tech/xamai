@@ -1,4 +1,4 @@
-import { HashRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "../pages/Login";
 import Home from "../pages/Home";
@@ -9,10 +9,13 @@ import Orcamento from "../pages/Orcamento";
 import OrcamentoEnviado from "../pages/OrcamentoEnviado"
 import Orcamentos from "../pages/Orcamentos"
 import OrcamentosDetalhes from "../pages/OrcamentoDetalhes";
+import PainelProfissional from "../pages/PainelProfissional";
+import SolicitacaoDetalhes from "../pages/SolicitacaoDetalhes";
+import EnviarOrcamento from "../pages/EnviarOrcamento";
 
 function AppRoutes() {
     return (
-        <HashRouter>
+        <BrowserRouter>
             <Routes>
                 <Route
                     path="/"
@@ -67,8 +70,23 @@ function AppRoutes() {
                     path="/orcamento-detalhes/:id"
                     element={<OrcamentosDetalhes/>}
                 />
+
+                <Route 
+                    path="/painel-profissional"
+                    element={<PainelProfissional />}
+                />
+
+                <Route 
+                    path="/painel-profissional/solicitacao/:id"
+                    element={<SolicitacaoDetalhes/>}
+                />
+
+                <Route
+                    path="/painel-profissional/orcamento/:id"
+                    element={<EnviarOrcamento />}
+                />
             </Routes>
-        </HashRouter>
+        </BrowserRouter>
     )
 }
 
