@@ -7,18 +7,20 @@ import {
 } from "lucide-react"
 
 import { useNavigate, useParams } from "react-router-dom"
-import { solicitacoes } from "../data/solicitacoes"
+import { useOrcamentos } from "../context/OrcamentoContext"
 
 function SolicitacaoDetalhes() {
     const navigate = useNavigate()
 
+    const { orcamentos } = useOrcamentos()
+
     const { id } = useParams()
 
-    const solicitacao = solicitacoes.find(
+    const orcamento = orcamentos.find(
         (item) => item.id === Number(id)
     )
 
-    if(!solicitacao){
+    if(!orcamento){
         return(
             <main className="flex min-h-screen items-center justify-center bg-[#F3EEE6] p-5">
                 <div className="text-center">
@@ -57,7 +59,7 @@ function SolicitacaoDetalhes() {
                     </h1>
 
                     <p className="text-sm text-gray-600">
-                        #{solicitacao.id}
+                        #{orcamento.id}
                     </p>
                 </div>
             </header>
@@ -71,12 +73,12 @@ function SolicitacaoDetalhes() {
 
                     <div className="mt-3 flex items-center gap-3">
                         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-200 font-bold text-gray-600">
-                            {solicitacao.cliente.charAt(0)}
+                            {orcamento.cliente.charAt(0)}
                         </div>
 
                         <div>
                             <h2 className="font-bold text-gray-900">
-                                {solicitacao.cliente}
+                                {orcamento.cliente}
                             </h2>
 
                             <p className="text-sm text-gray-600">
@@ -99,7 +101,7 @@ function SolicitacaoDetalhes() {
                             </p>
 
                             <h2 className="font-bold text-gray-900">
-                                {solicitacao.servico}
+                                {orcamento.servico}
                             </h2>
                         </div>
                     </div>
@@ -112,7 +114,7 @@ function SolicitacaoDetalhes() {
                     </p>
 
                     <p className="mt-3 leading-relaxed text-gray-700">
-                        {solicitacao.descricao}
+                        {orcamento.descricao}
                     </p>
                 </div>
 
@@ -130,7 +132,7 @@ function SolicitacaoDetalhes() {
                         />
 
                         <span className="font-semibold text-gray-800">
-                            {solicitacao.data}
+                            {orcamento.data}
                         </span>
                     </div>
                 </div>
@@ -148,14 +150,14 @@ function SolicitacaoDetalhes() {
                         />
 
                         <span className="font-semibold text-gray-800">
-                            {solicitacao.endereco}
+                            {orcamento.endereco}
                         </span>
                     </div>
                 </div>
 
                 {/* Botão */}
                 <button
-                    onClick={() => navigate(`/painel-profissional/orcamento/${solicitacao.id}`)}
+                    onClick={() => navigate(`/painel-profissional/orcamento/${orcamento.id}`)}
                     className="w-full rounded-2xl bg-[#8B3217] py-4 font-bold text-white shadow-md transition hover:bg-[#70260F] active:scale-[0.98]"
                 >
                     ENVIAR ORÇAMENTO

@@ -4,11 +4,13 @@ import {
   User,
 } from "lucide-react"
 
-import { solicitacoes } from "../data/solicitacoes"
+import { useOrcamentos } from "../context/OrcamentoContext"
 
 import { useNavigate } from "react-router-dom"
 
 function PainelProfissional() {
+
+  const { orcamentos } = useOrcamentos()
 
   const navigate = useNavigate()
 
@@ -50,7 +52,7 @@ function PainelProfissional() {
               </p>
 
               <p className="text-3xl font-bold">
-                {solicitacoes.length}
+                {orcamentos.length}
               </p>
             </div>
 
@@ -74,10 +76,10 @@ function PainelProfissional() {
 
         <div className="space-y-4">
 
-          {solicitacoes.map((solicitacao) => (
+          {orcamentos.map((orcamento) => (
 
             <div
-              key={solicitacao.id}
+              key={orcamento.id}
               className="rounded-2xl bg-white p-5 shadow-sm"
             >
 
@@ -85,11 +87,11 @@ function PainelProfissional() {
 
                 <div>
                   <h3 className="font-bold text-gray-900">
-                    {solicitacao.cliente}
+                    {orcamento.cliente}
                   </h3>
 
                   <p className="mt-1 text-sm text-gray-600">
-                    {solicitacao.servico}
+                    {orcamento.servico}
                   </p>
                 </div>
 
@@ -100,23 +102,23 @@ function PainelProfissional() {
               </div>
 
               <p className="mt-4 text-sm leading-relaxed text-gray-600">
-                {solicitacao.descricao}
+                {orcamento.descricao}
               </p>
 
               <div className="mt-4 border-t border-gray-100 pt-4">
 
                 <p className="text-sm text-gray-500">
-                  📅 {solicitacao.data}
+                  📅 {orcamento.data}
                 </p>
 
                 <p className="mt-1 text-sm text-gray-500">
-                  📍 {solicitacao.endereco}
+                  📍 {orcamento.endereco}
                 </p>
 
               </div>
 
               <button
-                onClick={() =>  navigate(`/painel-profissional/solicitacao/${solicitacao.id}`)}
+                onClick={() =>  navigate(`/painel-profissional/solicitacao/${orcamento.id}`)}
                 className="mt-5 w-full rounded-xl bg-[#8B3217] py-3 font-bold text-white transition hover:bg-[#70260F]"
               >
                 VER SOLICITAÇÃO

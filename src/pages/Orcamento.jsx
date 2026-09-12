@@ -8,7 +8,7 @@ import {
 
 import { useState } from "react"
 
-import { useNavigate, useParams } from "react-router-dom"
+import { data, useNavigate, useParams } from "react-router-dom"
 
 import { profissionais } from "../data/profissionais"
 
@@ -54,13 +54,23 @@ function Orcamento() {
 
         const orcamento = {
             id: Date.now(),
+
+            cliente: {
+                nome: "Cliente Xamai",
+            },
+
             profissionalId: profissional.id,
             profissional: profissional.nome,
             servico: profissional.profissao,
-            ...formulario,
+            descricao: formulario.descricao,
+            data: formulario.data,
+            endereco: formulario.endereco,
+
             fotos,
             status: "aguardando",
-            solicitacaoId: profissional.id,
+            valor: null,
+            observacao: "",
+            prazo: "",
         }
 
        adicionarOrcamento(orcamento)
