@@ -49,7 +49,7 @@ function ProfessionalCard({ profissional }) {
                         <span className="flex items-center gap-1 text-sm text-gray-500">
                             <MapPin size={15} />
 
-                            {profissional.distancia}
+                            {profissional.cidade}
                         </span>
                     </div>
                 </div>

@@ -1,41 +1,74 @@
+import { useEffect, useState } from "react"
+
 import {
     ArrowLeft,
     MapPin,
     Star,
-    BriefcaseBusiness,
 } from "lucide-react"
 
 import {
     useNavigate,
-    useParams
+    useParams,
 } from "react-router-dom"
 
-import { profissionais } from "../data/profissionais"
+import { buscarProfissional } from "../services/api"
 
 function Profissional() {
-
+    const { id } = useParams()
     const navigate = useNavigate()
 
-    const { id } = useParams()
+    const [profissional, setProfissional] = useState(null)
+    const [carregando, setCarregando] = useState(true)
+    const [erro, setErro] = useState("")
 
-    const profissional = profissionais.find(
-        (item) => item.id === Number(id)
-    )
-    if(!profissional) {
+    useEffect(() => {
+        async function carregarProfissional() {
+            try {
+                setCarregando(true)
+                setErro("")
+
+                const dados = await buscarProfissional(id)
+
+                setProfissional(dados)
+
+            } catch (erro) {
+                console.error(erro)
+
+                setErro(
+                    "Não foi possível carregar o profissional."
+                )
+
+            } finally {
+                setCarregando(false)
+            }
+        }
+
+        carregarProfissional()
+    }, [id])
+
+    if (carregando) {
         return (
-            <main className="flex min-h-screen items-center justify-center bg-[#F3EEE6] p-5">
-                <div className="text-center">
-                    <h1 className="text-2xl font-bold text-gray-900">Profissional não encontrado</h1>
+            <main className="flex min-h-screen items-center justify-center bg-[#F3EEE6]">
+                <p className="text-gray-500">
+                    Carregando profissional...
+                </p>
+            </main>
+        )
+    }
 
-                    <p className="mt-2 text-gray-600">O profissional que você procura não existe.</p>
+    if (erro) {
+        return (
+            <main className="min-h-screen bg-[#F3EEE6] px-5">
+                <button
+                    onClick={() => navigate(-1)}
+                    className="mt-5 rounded-full p-2 text-gray-700 hover:bg-white"
+                >
+                    <ArrowLeft size={22} />
+                </button>
 
-                    <button
-                        onClick={() => navigate("/home")}
-                        className="mt-6 rounded-xl bg-[#8B3217] px-6 py-3 font-bold text-white"
-                    >
-                        VOLTAR PARA HOME
-                    </button>
-                </div>
+                <p className="mt-10 text-center font-semibold text-red-600">
+                    {erro}
+                </p>
             </main>
         )
     }
@@ -43,77 +76,90 @@ function Profissional() {
     return (
         <main className="min-h-screen bg-[#F3EEE6] px-5 pb-8">
 
-            {/* Cabeçalho */}
             <header className="flex items-center gap-4 py-5">
-                <button 
+                <button
                     onClick={() => navigate(-1)}
                     className="rounded-full p-2 text-gray-700 transition hover:bg-white"
+                    aria-label="Voltar"
                 >
-                    <ArrowLeft size={22}/>
+                    <ArrowLeft size={22} />
                 </button>
+
+                <h1 className="text-2xl font-bold text-gray-900">
+                    Profissional
+                </h1>
             </header>
 
-            {/* Perfil */}
-            <section className="rounded-3xl bg-white p-6 text-center shadow-sm">
-                <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-gray-200 text-4xl font-bold text-gray-600">
-                    {profissional.nome.charAt(0)}
+            <section className="mt-4 rounded-2xl bg-white p-6 shadow-sm">
+
+                <div className="flex flex-col items-center text-center">
+
+                    <div className="flex h-24 w-24 items-center justify-center rounded-full bg-gray-200 text-3xl font-bold text-gray-600">
+                        {profissional.nome.charAt(0)}
+                    </div>
+
+                    <h2 className="mt-4 text-2xl font-bold text-gray-900">
+                        {profissional.nome}
+                    </h2>
+
+                    <p className="mt-1 text-gray-600">
+                        {profissional.profissao}
+                    </p>
+
+                    <div className="mt-3 flex items-center gap-4">
+
+                        <span className="flex items-center gap-1 font-semibold text-gray-700">
+                            <Star
+                                size={17}
+                                fill="currentColor"
+                            />
+
+                            {profissional.avaliacao}
+                        </span>
+
+                        <span className="flex items-center gap-1 text-gray-500">
+                            <MapPin size={17} />
+
+                            {profissional.cidade}
+                        </span>
+
+                    </div>
+
                 </div>
 
-                <h2 className="mt-4 text-2xl font-bold text-gray-900">
-                    {profissional.nome}
+            </section>
+
+            <section className="mt-5">
+
+                <h2 className="text-xl font-bold text-gray-900">
+                    Serviço
                 </h2>
 
-                <p className="mt-1 text-gray-600">
-                    {profissional.profissao}
-                </p>
+                <div className="mt-3 rounded-2xl bg-white p-5 shadow-sm">
 
-                <div className="mt-3 flex justify-center gap-4">
-                    <span className="flex items-center gap-1 font-semibold text-gray-700">
-                        <Star size={17} fill="currentColor"/>
-                        {profissional.avaliacao}
-                    </span>
+                    <p className="font-semibold text-gray-800">
+                        {profissional.profissao}
+                    </p>
 
-                    <span className="flex items-center gap-1 text-gray-500">
-                        <MapPin size={17}/>
-                        {profissional.distancia}
-                    </span>
+                    <p className="mt-1 text-sm text-gray-500">
+                        Serviço: {profissional.servico}
+                    </p>
+
                 </div>
+
             </section>
 
-            {/* Localização */}
-            <section className="mt-5 rounded-2xl bg-white p-5">
-                <h3 className="flex items-center gap-2 text-lg font-bold text-gray-900">
-                    <MapPin  size={20} className="text-[#8B3217]"/>
-                    Localização
-                </h3>
-
-                <p className="mt-2 text-gray-600">
-                    {profissional.cidade}
-                </p>
-            </section>
-
-            {/* Serviço */}
-            <section className="mt-4 rounded-2xl bg-white p-5">
-                <h3 className="flex items-center gap-2 text-lg font-bold text-gray-900">
-                    <BriefcaseBusiness size={20} className="text-[#8B3217]"/>
-                    Serviço
-                </h3>
-
-                <p className="mt-2 text-gray-600">
-                    {profissional.profissao}
-                </p>
-            </section>
-
-            {/* Botão */}
-            <button 
-                onClick={() => navigate(`/orcamento/${profissional.id}`)}
-                className="mt-6 w-full rounded-2xl bg-[#8B3217] py-4 font-bold text-white shadow-md transition hover:bg-[#70260F] active:scale-[0.98]"
+            <button
+                onClick={() =>
+                    navigate(`/orcamento/${profissional.id}`)
+                }
+                className="mt-6 w-full rounded-xl bg-[#8B3217] py-4 font-bold text-white transition hover:bg-[#70260F]"
             >
-                SOLICITAR AGENDAMENTO
+                SOLICITAR ORÇAMENTO
             </button>
+
         </main>
     )
-
 }
 
 export default Profissional
