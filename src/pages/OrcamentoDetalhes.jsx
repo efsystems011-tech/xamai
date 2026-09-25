@@ -4,42 +4,72 @@ import {
     MapPin,
     User,
     Clock,
+    Star,
 } from "lucide-react"
 
 import { useNavigate, useParams } from "react-router-dom"
 import { useOrcamentos } from "../context/OrcamentoContext"
 import StatusOrcamento from "../components/StatusOrcamento"
 
+import { useEffect, useState } from "react"
+import { buscarSolicitacao } from "../services/api"
+
 function OrcamentosDetalhes() {
 
     const navigate = useNavigate()
     const { id } = useParams()
-
     const { orcamentos } = useOrcamentos()
 
-    const orcamento = orcamentos.find(
-        (item) => item.id === Number(id)
-    )
+    const [solicitacao, setSolicitacao] = useState(null)
+    const [carregando, setCarregando] = useState(true)
+    const [erro, setErro] = useState("")
 
-    if (!orcamento) {
+    useEffect(() => {
+        async function carregarSolicitacao() {
+            try {
+                setCarregando(true)
+                setErro("")
+
+                const dados = await buscarSolicitacao(id)
+
+                setSolicitacao(dados)
+            } catch (erro) {
+                console.error(erro)
+
+                setErro(
+                    "Não foi possível carregar a solicitação."
+                )
+            } finally {
+                setCarregando(false)
+            }
+        }
+
+        carregarSolicitacao()
+    }, [id])
+
+    if (carregando) {
         return (
-            <main className="flex min-h-screen items-center justify-center bg-[#F3EEE6] p-5">
-                <div className="text-center">
-                    <h1 className="text-2xl font-bold text-gray-900">
-                        Orçamento não encontrado
-                    </h1>
+            <main className="flex min-h-screen items-center justify-center bg-[#F3EEE6]">
+                <p className="text-gray-500">
+                    Carregando solicitação...
+                </p>
+            </main>
+        )
+    }
 
-                    <p className="mt-2 text-gray-600">
-                        Não foi possível encontrar essa solicitação.
-                    </p>
+    if (erro) {
+        return (
+            <main className="min-h-screen bg-[#F3EEE6] px-5">
+                <button
+                    onClick={() => navigate(-1)}
+                    className="mt-5 rounded-full p-2 text-gray-700 hover:bg-white"
+                >
+                    <ArrowLeft size={22} />
+                </button>
 
-                    <button
-                        onClick={() => navigate("/orcamentos")}
-                        className="mt-6 bg-[#8B3217] rounded-xl px-6 py-3 font-bold text-white"
-                    >
-                        VOLTAR
-                    </button>
-                </div>
+                <p className="mt-10 text-center font-semibold text-red-600">
+                    {erro}
+                </p>
             </main>
         )
     }
@@ -54,141 +84,83 @@ function OrcamentosDetalhes() {
                     <ArrowLeft size={22} />
                 </button>
 
-                <div>
+                <div className="text-2xl font-bold text-gray-900">
                     <h1 className="text-2xl font-bold text-gray-900">
-                        Detalhes
+                        Solicitação
                     </h1>
 
                     <p className="text-sm text-gray-600">
-                        Orçamento #{orcamento.id}
+                        Orçamento #{solicitacao.id}
                     </p>
                 </div>
             </header>
 
-            <section className="space-y-4">
-
-                {/* Status */}
-                <div className="bg-yellow-100 rounded-2xl p-4">
-                    <div className="flex items-center gap-3">
-                        <Clock
-                            size={22}
-                            className="text-yellow-700"
-                        />
-
-                        <div>
-                            <p className="text-xs font-semibold text-gray-500">
-                                STATUS
-                            </p>
-
-                            <div className="mt-2">
-                                <StatusOrcamento status={orcamento.status}/>
-                            </div>
-                        </div>
+            {/* Profissional */}
+            <section className="rounded-2xl bg-white p-5 shadow-sm">
+                <div className="flex items-center gap-4">
+                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-gray-200 text-2xl font-bold text-gray-600">
+                        {solicitacao.profissional_nome.charAt(0)}
                     </div>
-                </div>
 
-                {/* Profissional */}
-                <div className="bg-white rounded-2xl p-5 shadow-sm">
-                    <p className="text-xs font-semibold text-gray-500">
-                        PROFISSIONAL
-                    </p>
+                    <div className="min-w-0 flex-1">
+                        <h2 className="text-lg font-bold text-gray-900">
+                            {solicitacao.profissional_nome}
+                        </h2>
 
-                    <div className="mt-3 flex items-center gap-3">
-                        <div className="flex h-12 w-12 items-center justify-center bg-gray-200 rounded-full font-bold text-gray-600">
-                            {orcamento.profissional.charAt(0)}
-                        </div>
-
-                        <div>
-                            <h2 className="font-bold text-gray-900">
-                                {orcamento.profissional}
-                            </h2>
-
-                            <p className="text-sm text-gray-600">
-                                {orcamento.servico}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Descrição */}
-                <div className="bg-white rounded-2xl p-5 shadow-sm">
-                    <p className="text-xs font-semibold text-gray-500">
-                        DESCRIÇÃO DO SERVIÇO
-                    </p>
-
-                    <p className="mt-3 leading-relaxed text-gray-700">
-                        {orcamento.descricao}
-                    </p>
-                </div>
-
-                {/* Informações */}
-                <div className="rounded-2xl bg-white p-5 shadow-sm">
-
-                    <p className="text-xs font-semibold text-gray-500">
-                        INFORMAÇÕES
-                    </p>
-
-                    <div className="mt-4 space-y-4">
-
-                        <div className="flex items-center gap-3">
-
-                            <CalendarDays size={20} className="text-[#8B3217]" />
-
-                            <div>
-                                <p className="text-xs text-gray-500">
-                                    Data
-                                </p>
-
-                                <p className="font-semibold text-gray-800">
-                                    {orcamento.data}
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                            <MapPin
-                                size={20}
-                                className="text-[#8B3217]"
-                            />
-
-                            <div>
-                                <p className="text-xs text-gray-500">
-                                    Local
-                                </p>
-
-                                <p className="font-semibold text-gray-800">
-                                    {orcamento.endereco}
-                                </p>
-                            </div> 
-                        </div>
-                    </div>
-                </div>
-
-                {orcamento.fotos && orcamento.fotos.length > 0 && (
-                    <div className="bg-white rounded-2xl p-5 shadow-sm">
-                        <p className="text-xs font-semibold text-gray-500">
-                            FOTOS DO SERVIÇO
+                        <p className="text-sm text-gray-600">
+                            {solicitacao.profissional_profissao}
                         </p>
 
-                        <div className="mt-4 grid grid-cols-2 gap-3">
-                            {orcamento.fotos.map((foto, index) => (
-                                <div
-                                    key={`${foto.name}-${index}`}
-                                    className="aspect-square overflow-hidden rounded-xl bg-gray-200"
-                                >
-                                    <img 
-                                        src={URL.createObjectURL(foto)} 
-                                        alt={`Foto do serviço ${index + 1}`}
-                                        className="h-full w-full object-cover" 
-                                    />
-                                </div>
-                            ))}
+                        <div className="mt-1 flex gap-3">
+                            <span className="flex items-center gap-1 text-sm font-semibold text-gray-700">
+                                <Star
+                                    size={14}
+                                    fill="currentColor"
+                                />
+                                {solicitacao.profissional_avaliacao}
+                            </span>
+
+                            <span className="flex items-center gap-1 text-sm text-gray-500">
+                                <MapPin size={14} />
+
+                                {solicitacao.profissional_cidade}
+                            </span>
                         </div>
                     </div>
-                )}
+                </div>
+            </section>
+
+            {/* Status */}
+            <section className="mt-5">
+                <h2 className="mb-3 text-xl font-bold text-gray-900">
+                    Status
+                </h2>
+
+                <div className="rounded-2xl bg-white p-5 shadow-sm">
+                    <span className="inline-block rounded-full bg-yellow-100 px-4 py-2 text-sm font-bold capitalize text-yellow-700">
+                        {solicitacao.status}
+                    </span>
+                </div>
+            </section>
+
+            {/* Descrição */}
+            <section className="mt-5">
+                <h2 className="mb-3 text-xl font-bold text-gray-900">
+                    Descrição do serviço
+                </h2>
+
+                <div className="rounded-2xl bg-white p-5 shadow-sm">
+                    <p className="leading-7 text-gray-700">
+                        {solicitacao.descricao}
+                    </p>
+                </div>
             </section>
         </main>
     )
+
+
+
+
 
 }
 

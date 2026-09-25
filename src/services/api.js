@@ -63,3 +63,17 @@ export async function buscarSolicitacoes() {
     return resposta.json()
 }
 
+export async function buscarSolicitacao(id) {
+    const resposta = await fetch(
+        `${API_URL}/api/solicitacoes/${id}`
+    )
+
+    if(!resposta.ok) {
+        throw new Error(
+            "Erro ao buscar solicitação"
+        )
+    }
+
+    return resposta.json()
+}
+

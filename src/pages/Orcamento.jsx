@@ -1,14 +1,36 @@
 import { useEffect, useState } from "react"
 import { ArrowLeft } from "lucide-react"
 import { useNavigate, useParams } from "react-router-dom"
-
-import { criarSolicitacao} from "../services/api"
+import { criarSolicitacao } from "../services/api"
 
 function Orcamento() {
   const { id } = useParams()
   const navigate = useNavigate()
 
   const [descricao, setDescricao] = useState("")
+
+  async function handleSubmit(evento) {
+        evento.preventDefault()
+
+        if (descricao.trim() === "") {
+            return
+        }
+
+        try {
+            const resultado = await criarSolicitacao({
+                usuario_id: 1,
+                profissional_id: id,
+                descricao,
+            })
+
+            console.log(resultado)
+
+            navigate("/orcamentos")
+
+        } catch (erro) {
+            console.error(erro)
+        }
+    }
 
   return (
     <main className="min-h-screen bg-[#F3EEE6] px-5 pb-8">

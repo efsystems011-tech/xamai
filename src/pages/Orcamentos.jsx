@@ -41,28 +41,6 @@ function Orcamentos() {
         carregarSolicitacoes()
     }, [])
 
-    async function handleSubmit(evento) {
-        evento.preventDefault()
-
-        if (descricao.trim() === "") {
-            return
-        }
-
-        try {
-            const resultado = await criarSolicitacao({
-                profissional_id: id,
-                descricao,
-            })
-
-            console.log(resultado)
-
-            navigate("/orcamentos")
-
-        } catch (erro) {
-            console.error(erro)
-        }
-    }
-
     return (
         <main className="min-h-screen bg-[#F3EEE6] px-5 pb-8">
             <header className="flex items-center gap-4 py-5">
@@ -134,7 +112,7 @@ function Orcamentos() {
                                 </span>
                             </div>
 
-                            <p className="mt-4 line-clamp-2 text-sm texr-gray-600">
+                            <p className="mt-4 line-clamp-2 text-sm text-gray-600">
                                 {solicitacao.descricao}
                             </p>
                         </button>
