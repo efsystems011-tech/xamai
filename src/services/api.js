@@ -26,3 +26,40 @@ export async function buscarProfissional(id) {
     return resposta.json()
 }
 
+export async function criarSolicitacao(dados) {
+    const resposta = await fetch(
+        `${API_URL}/api/solicitacoes`,
+        {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify(dados),
+        }
+    )
+
+    if(!resposta.ok) {
+        throw new Error(
+            "Erro ao criar solicitação."
+        )
+    }
+
+    return resposta.json()
+}
+
+export async function buscarSolicitacoes() {
+    const resposta = await fetch(
+        `${API_URL}/api/solicitacoes`
+    )
+
+    if(!resposta.ok) {
+        throw new Error(
+            "Erro ao buscar solicitações"
+        )
+    }
+
+    return resposta.json()
+}
+
