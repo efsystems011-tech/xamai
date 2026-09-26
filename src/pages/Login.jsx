@@ -2,7 +2,7 @@ import { use, useState } from "react"
 import { useNavigate } from "react-router-dom"
 
 import Logo from "../components/Logo"
-import Input from "../components/Input" 
+import Input from "../components/Input"
 import Button from "../components/Button"
 
 function Login() {
@@ -16,17 +16,17 @@ function Login() {
     function handleLogin(evento) {
         evento.preventDefault()
 
-       if (nome.trim() === "") {
-        setMensagem("Digite seu nome")
-        return
-       }
+        if (nome.trim() === "") {
+            setMensagem("Digite seu nome")
+            return
+        }
 
-       if (senha.trim() === "") {
-        setMensagem("Digite sua senha")
-        return
-       }
+        if (senha.trim() === "") {
+            setMensagem("Digite sua senha")
+            return
+        }
 
-       navigate("/home")
+        navigate("/home")
     }
 
     return (
@@ -48,18 +48,18 @@ function Login() {
                 </div>
 
                 {/* Formulário */}
-                <form 
+                <form
                     onSubmit={handleLogin}
                     className="mt-8 space-y-5">
                     {/* Nome */}
-                   <Input
+                    <Input
                         id="nome"
                         label="NOME"
                         type="text"
                         placeholder="Digite seu nome"
                         value={nome}
                         onChange={(evento) => setNome(evento.target.value)}
-                   />
+                    />
 
                     {/* Senha */}
                     <Input
@@ -72,9 +72,9 @@ function Login() {
                     />
 
                     {/* Botão */}
-                    <Button 
+                    <Button
                         type="submit"
-                        >
+                    >
                         ENTRAR
                     </Button>
 
@@ -85,6 +85,20 @@ function Login() {
                 </form>
 
                 <p className="mt-1 text-gray-600 flex items-center justify-center ">Entre para continuar</p>
+
+                <p className="mt-6 text-center text-sm text-gray-600">
+                    Ainda não possui uma conta?{" "}
+
+                    <button
+                        type="button"
+                        onClick={() => navigate("/cadastro")}
+                        className="font-bold text-[#8B3217] hover:underline "
+                    >
+                        Criar conta
+                    </button>
+
+                </p>
+
             </div>
         </main>
     )

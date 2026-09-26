@@ -77,3 +77,27 @@ export async function buscarSolicitacao(id) {
     return resposta.json()
 }
 
+export async function cadastrarUsuario(dados) {
+    const resposta = await fetch(
+        `${API_URL}/api/usuarios`,
+        {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json",
+            },
+
+            body: JSON.stringify(dados),
+        }
+    )
+
+    const resultado = await resposta.json()
+
+    if (!resposta.ok) {
+        throw new Error(
+            resultado.erro || "Erro ao cadastrar usuário."
+        )
+    }
+
+    return resultado
+}

@@ -12,6 +12,7 @@ import OrcamentosDetalhes from "../pages/OrcamentoDetalhes";
 import PainelProfissional from "../pages/PainelProfissional";
 import SolicitacaoDetalhes from "../pages/SolicitacaoDetalhes";
 import EnviarOrcamento from "../pages/EnviarOrcamento";
+import Cadastro from "../pages/Cadastro";
 
 function AppRoutes() {
     return (
@@ -84,6 +85,11 @@ function AppRoutes() {
                 <Route
                     path="/painel-profissional/orcamento/:id"
                     element={<EnviarOrcamento />}
+                />
+
+                <Route
+                    path="/cadastro"
+                    element={<Cadastro/>}
                 />
             </Routes>
         </BrowserRouter>
