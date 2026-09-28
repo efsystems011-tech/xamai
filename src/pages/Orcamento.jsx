@@ -18,7 +18,6 @@ function Orcamento() {
 
         try {
             const resultado = await criarSolicitacao({
-                usuario_id: 1,
                 profissional_id: id,
                 descricao,
             })

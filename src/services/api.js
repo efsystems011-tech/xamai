@@ -2,6 +2,10 @@ import { profissionais } from "../data/profissionais"
 
 const API_URL = "http://localhost:3000"
 
+function obterToken() {
+    return localStorage.getItem("xamai_token")
+}
+
 export async function buscarProfissionais() {
     const resposta = await fetch(
         `${API_URL}/api/profissionais`
@@ -27,54 +31,81 @@ export async function buscarProfissional(id) {
 }
 
 export async function criarSolicitacao(dados) {
-    const resposta = await fetch(
-        `${API_URL}/api/solicitacoes`,
-        {
-            method: "POST",
+   const token = obterToken()
 
-            headers: {
-                "Content-Type": "application/json"
-            },
+   const resposta = await fetch(
+    `${API_URL}/api/solicitacoes`,
+    {
+        method: "POST",
 
-            body: JSON.stringify(dados),
-        }
-    )
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+        },
 
-    if(!resposta.ok) {
-        throw new Error(
-            "Erro ao criar solicitação."
-        )
+        body: JSON.stringify(dados),
     }
+   )
 
-    return resposta.json()
+   const resultado = await resposta.json()
+
+   if(!resposta.ok) {
+    throw new Error(
+        resultado.erro || "Erro ao criar solicitação."
+    )
+   }
+
+   return resultado
 }
 
 export async function buscarSolicitacoes() {
+    const token = obterToken()
+
     const resposta = await fetch(
-        `${API_URL}/api/solicitacoes`
+        `${API_URL}/api/solicitacoes`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
     )
+
+    const resultado = await resposta.json()
 
     if(!resposta.ok) {
         throw new Error(
+            resultado.erro ||
             "Erro ao buscar solicitações"
         )
     }
 
-    return resposta.json()
+    return resultado
 }
 
 export async function buscarSolicitacao(id) {
+
+    const token = obterToken()
+
     const resposta = await fetch(
-        `${API_URL}/api/solicitacoes/${id}`
+        `${API_URL}/api/solicitacoes/${id}`,
+
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
     )
+
+    const resultado = await resposta.json()
 
     if(!resposta.ok) {
         throw new Error(
+            resultado.erro ||
             "Erro ao buscar solicitação"
         )
     }
 
-    return resposta.json()
+    return resultado
 }
 
 export async function cadastrarUsuario(dados) {
@@ -96,6 +127,30 @@ export async function cadastrarUsuario(dados) {
     if (!resposta.ok) {
         throw new Error(
             resultado.erro || "Erro ao cadastrar usuário."
+        )
+    }
+
+    return resultado
+}
+
+export async function loginUsuario(dados) {
+    const resposta = await fetch(
+        `${API_URL}/api/usuarios/login`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+
+            body: JSON.stringify(dados),
+        }
+    )
+
+    const resultado = await resposta.json()
+
+    if(!resposta.ok) {
+        throw new Error(
+            resultado.erro || "Erro ao realizar o login."
         )
     }
 

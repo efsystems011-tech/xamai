@@ -1,32 +1,55 @@
-import { use, useState } from "react"
+import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 
 import Logo from "../components/Logo"
 import Input from "../components/Input"
 import Button from "../components/Button"
 
+import { loginUsuario } from "../services/api"
+
 function Login() {
 
     const navigate = useNavigate()
 
-    const [nome, setNome] = useState("")
+    const [email, setEmail] = useState("")
     const [senha, setSenha] = useState("")
-    const [mensagem, setMensagem] = useState("")
 
-    function handleLogin(evento) {
+    const [mensagem, setMensagem] = useState("")
+    const [erro, setErro] = useState("")
+
+    async function handleLogin(evento) {
         evento.preventDefault()
 
-        if (nome.trim() === "") {
-            setMensagem("Digite seu nome")
-            return
-        }
+        setMensagem("")
+        setErro("")
 
-        if (senha.trim() === "") {
-            setMensagem("Digite sua senha")
-            return
-        }
+        try {
+            const resultado = await loginUsuario({
+                email,
+                senha,
+            })
 
-        navigate("/home")
+            localStorage.setItem(
+                "xamai_token",
+                resultado.token
+            )
+
+            localStorage.setItem(
+                "xamai_usuario",
+                JSON.stringify(resultado.usuario)
+            )
+
+            setMensagem(
+                "Login realizado com sucesso!"
+            )
+
+            navigate("/home")
+
+        } catch (erro) {
+            console.error(erro)
+
+            setErro(erro.message)
+        }
     }
 
     return (
@@ -53,12 +76,12 @@ function Login() {
                     className="mt-8 space-y-5">
                     {/* Nome */}
                     <Input
-                        id="nome"
-                        label="NOME"
-                        type="text"
-                        placeholder="Digite seu nome"
-                        value={nome}
-                        onChange={(evento) => setNome(evento.target.value)}
+                        id="email"
+                        label="EMAIL"
+                        type="email"
+                        placeholder="Digite seu email"
+                        value={email}
+                        onChange={(evento) => setEmail(evento.target.value)}
                     />
 
                     {/* Senha */}
