@@ -65,7 +65,7 @@ function Login() {
                         Login
                     </h2>
 
-                    <p className="mt-1 text-gray=600">
+                    <p className="mt-1 text-gray-600">
                         Entre para continuar
                     </p>
                 </div>

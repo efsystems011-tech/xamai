@@ -1,3 +1,5 @@
+import { use, useEffect, useState } from "react"
+
 import {
     ArrowLeft,
     CalendarDays,
@@ -9,19 +11,112 @@ import {
 import { useNavigate, useParams } from "react-router-dom"
 import { useOrcamentos } from "../context/OrcamentoContext"
 
+import {
+    buscarSolicitacao,
+    criarOrcamento,
+} from "../services/api"
+
 function SolicitacaoDetalhes() {
     const navigate = useNavigate()
-
     const { orcamentos } = useOrcamentos()
-
     const { id } = useParams()
+
+    const [solicitacao, setSolicitacao] = useState(null)
+    const [valor, setValor] = useState("")
+    const [observacao, setObservacao] = useState("")
+
+    const [carregando, setCarregando] = useState(true)
+    const [enviando, setEnviando] = useState(false)
+    const [erro, setErro] = useState("")
+    const [mensagem, setMensagem] = useState("")
 
     const orcamento = orcamentos.find(
         (item) => item.id === Number(id)
     )
 
-    if(!orcamento){
-        return(
+    useEffect(() => {
+        async function carregar() {
+            try {
+                const dados = await buscarSolicitacao(id)
+
+                setSolicitacao(dados)
+            } catch (erro) {
+                console.error(erro)
+
+                setErro(
+                    "Não foi possível carregar a solicitação."
+                )
+            } finally {
+                setCarregando(false)
+            }
+        }
+
+        carregar()
+    }, [id])
+
+    async function handleEnviarOrcamento(evento) {
+        evento.preventDefault()
+
+        setErro("")
+        setMensagem("")
+
+
+        try {
+            setEnviando(true)
+
+            const resultado = await criarOrcamento({
+                solicitacao_id: id,
+                valor: Number(valor),
+                observacao,
+            })
+
+            setMensagem(resultado.mensagem)
+
+            setValor("")
+            setObservacao("")
+
+            setSolicitacao({
+                ...solicitacao,
+                status: "orcamento_enviado",
+            })
+        } catch (erro) {
+            console.error(erro)
+
+            setErro(erro.message)
+        } finally {
+            setEnviando(false)
+        }
+    }
+
+    if (carregando) {
+        return (
+            <main className="flex min-h-screen items-center justify-center bg-[#F3EEE6]">
+                <p className="text-gray-500">
+                    Carregando solicitação...
+                </p>
+            </main>
+        )
+    }
+
+    if (erro && !solicitacao) {
+        return (
+            <main className="min-h-screen bg-[#F3EEE6] px-5">
+                <button
+                    onClick={() => navigate(-1)}
+                    className="mt-5 rounded-full p-2 hover:bg-white"
+                >
+                    <ArrowLeft size={22}/>
+                </button>
+
+                <p className="mt-10 text-center font-semibold text-red-600">
+                    {erro}
+                </p>
+            </main>
+        )
+    }
+
+    if (!orcamento) {
+        return (
             <main className="flex min-h-screen items-center justify-center bg-[#F3EEE6] p-5">
                 <div className="text-center">
                     <h1 className="text-2xl font-bold text-gray-900">
@@ -42,15 +137,15 @@ function SolicitacaoDetalhes() {
             </main>
         )
     }
-    return(
-        <main className="min-h-screen bg-[F3EEE6] px-5 pb-8">
+    return (
+        <main className="min-h-screen bg-[F3EEE6] px-5 pb-10">
             <header className="flex items-center gap-4 py-5">
                 <button
                     onClick={() => navigate(-1)}
                     className="rounded-full p-2 text-gray-700 transition hover:bg-white"
                     aria-label="Voltar"
                 >
-                    <ArrowLeft size={22}/>
+                    <ArrowLeft size={22} />
                 </button>
 
                 <div>
@@ -58,110 +153,21 @@ function SolicitacaoDetalhes() {
                         Solicitação
                     </h1>
 
-                    <p className="text-sm text-gray-600">
-                        #{orcamento.id}
+                    <p className="text-sm text-gray-500">
+                        Pedido #{solicitacao.id}
                     </p>
                 </div>
             </header>
 
-            <section className="space-y-4">
-                {/* Cliente */}
-                <div className="rounded-2xl bg-white p-5 shadow-sm">
-                    <p className="text-xs font-semibold text-gray-500">
-                        CLIENTE
-                    </p>
+            {/* Cliente */}
+            <section className="rounded-2xl bg-white p-5 shadow-sm">
 
-                    <div className="mt-3 flex items-center gap-3">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-200 font-bold text-gray-600">
-                            {orcamento.cliente.charAt(0)}
-                        </div>
-
-                        <div>
-                            <h2 className="font-bold text-gray-900">
-                                {orcamento.cliente}
-                            </h2>
-
-                            <p className="text-sm text-gray-600">
-                                Cliente Xamai
-                            </p>
-                        </div>
+                <div className="flex items-center gap-4">
+                    <div className="flex h-14 w-14 items-center justify-center">
+                        <User size={24}/>
                     </div>
                 </div>
-
-                {/* Serviço */}
-                <div className="rounded-2xl bg-white p-5 shadow-sm">
-                    <div className="flex items-center gap-3">
-                        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F3EEE6] text-[#8B3217]">
-                            <Wrench size={22}/>
-                        </div>
-
-                        <div>
-                            <p className="text-sm font-semibold text-gray-500">
-                                SERVICO SOLICITADO
-                            </p>
-
-                            <h2 className="font-bold text-gray-900">
-                                {orcamento.servico}
-                            </h2>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Descrição */}
-                <div className="rounded-2xl bg-white p-5 shadow-sm">
-                    <p className="text-xs font-semibold text-gray-500">
-                        DESCRIÇÃO DO SERVIÇO
-                    </p>
-
-                    <p className="mt-3 leading-relaxed text-gray-700">
-                        {orcamento.descricao}
-                    </p>
-                </div>
-
-                {/* Data */}
-                <div className="rounded-2xl bg-white p-5 shadow-sm">
-                    <p className="text-xs font-semibold text-gray-500">
-                        DATA DESEJADA
-                    </p>
-
-                    <div className="mt-3 flex items-center gap-3">
-
-                        <CalendarDays 
-                            size={22} 
-                            className="text-[#8B3217]"
-                        />
-
-                        <span className="font-semibold text-gray-800">
-                            {orcamento.data}
-                        </span>
-                    </div>
-                </div>
-
-                {/* Endereço */}
-                <div className="rounded-2xl bg-white p-5 shadow-sm">
-                    <p className="text-xs font-semibold text-gray-500">
-                        LOCAL DO SERVIÇO
-                    </p>
-
-                    <div className="mt-3 flex items-start gap-3">
-                        <MapPin 
-                            size={22}
-                            className="mt-0.5 shrink-0 text-[#8b3217]"
-                        />
-
-                        <span className="font-semibold text-gray-800">
-                            {orcamento.endereco}
-                        </span>
-                    </div>
-                </div>
-
-                {/* Botão */}
-                <button
-                    onClick={() => navigate(`/painel-profissional/orcamento/${orcamento.id}`)}
-                    className="w-full rounded-2xl bg-[#8B3217] py-4 font-bold text-white shadow-md transition hover:bg-[#70260F] active:scale-[0.98]"
-                >
-                    ENVIAR ORÇAMENTO
-                </button>
+                    
             </section>
         </main>
     )

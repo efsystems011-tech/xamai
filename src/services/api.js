@@ -1,3 +1,4 @@
+import { Thermometer } from "lucide-react"
 import { profissionais } from "../data/profissionais"
 
 const API_URL = "http://localhost:3000"
@@ -151,6 +152,57 @@ export async function loginUsuario(dados) {
     if(!resposta.ok) {
         throw new Error(
             resultado.erro || "Erro ao realizar o login."
+        )
+    }
+
+    return resultado
+}
+
+export async function buscarSolicitacoesRecebidas() {
+    const token = obterToken()
+
+    const resposta = await fetch(
+        `${API_URL}/api/painel/solicitacoes`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    )
+
+    const resultado = await resposta.json()
+
+    if (!resposta.ok) {
+        throw new Error(
+            resultado.erro || "Erro ao buscar solicitaçoes recebidas"
+        )
+    }
+
+    return resultado
+}
+
+export async function criarOrcamento(dados) {
+    const token = obterToken()
+
+    const resposta = await fetch(
+        `${API_URL}/api/orcamentos`,
+        {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+
+            body: JSON.stringify(dados),
+        }
+    )
+
+    const resultado = await resposta.json()
+
+    if (!resposta.ok) {
+        throw new Error(
+            resultado.erro || "Erro ao criar orçamentos"
         )
     }
 
